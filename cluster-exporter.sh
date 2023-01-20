@@ -351,15 +351,80 @@ function export_helm_charts_from_cluster(){
     done
 }
 
+# Function : check_cluster_reachable
+function check_cluster_reachable() {
+    local result=0
+    info "Checking if the cluster is reachable"
+    # check cluster is reable using kubectl get pods
+    if ! kubectl get pods > /dev/null 2>&1; then
+        error "The cluster is not reachable"
+        result=1
+    fi
+    return $result
+}
+
+# Function : check_helm_releases
+function check_helm_releases() {
+    local result=0
+    info "Checking if the cluster has any Helm releases"
+    if [ -z "$(get_helm_releases)" ]; then
+        error "The cluster has no Helm releases"
+        result=1
+    fi
+    return $result
+}
+
+# Function : check_cluster_health
+function check_cluster_health() {
+    local result=0
+    info "Checking if the cluster is healthy"
+    # use /healthz endpoint to check if the cluster is healthy
+    if ! kubectl get --raw /healthz > /dev/null 2>&1; then
+        error "The cluster is not healthy"
+        result=1
+    fi
+    return $result
+}
+
+# Function : check_kubectl
+function check_required_tools_available() {
+    local result=0
+    required_tools=("kubectl" "helm" "jq")
+    for tool in "${required_tools[@]}"
+    do
+        if ! command -v $tool > /dev/null 2>&1; then
+            error "$tool is not installed"
+            result=1
+        fi
+    done
+    return $result
+}
+
+# Function : Run Pre Checks
+# Description:
+#   Runs pre checks.
+#   - checks if the cluster is reachable and if the user has access to the cluster.
+#   - checks if the cluster has any Helm releases.
+#   - checks if cluster is healthy.
+#   - checks if kubectl, helm, jq are installed.
+function run_pre_checks() {
+    check_cluster_reachable && success "The cluster is reachable"
+    check_helm_releases && success "The cluster has Helm releases"
+    check_cluster_health && success "The cluster is healthy"
+    check_required_tools_available && success "All required tools are installed"
+}
+
+
+
 # Function : usage
 # Description:
 #   Prints usage instructions and a list of valid options to the terminal.
 function usage() {
     error "Usage: $0 < env | helm | file >"
     warn "\tAvailable options:"
-    info "\tenv:    Exports the cluster environment variables to a file named \"env_vars.csv\" in the current directory"
-    info "\thelm:   Exports the Helm charts to a directory named \".resources/helm\" in the current directory"
-    info "\tyaml:   Exports the YAML files to a directory named \".resources/yaml\" in the current directory"
+    info "\tprecheck:   Runs Pre Checks"
+    info "\t     env:   Exports the cluster environment variables to a file named \"env_vars.csv\" in the current directory"
+    info "\t    helm:   Exports the Helm charts to a directory named \".resources/helm\" in the current directory"
 }
 
 # Function : Main function
@@ -377,6 +442,7 @@ function main(){
     opt="$1"
     choice=$( tr '[:upper:]' '[:lower:]' <<<"$opt" )
     case $choice in
+        precheck)run_pre_checks;;
         env-list)print_tabular_output;;
         env)write_to_file;;
         helm)export_helm_charts_from_cluster;;
