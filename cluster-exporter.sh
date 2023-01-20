@@ -390,6 +390,7 @@ function check_cluster_health() {
 function check_required_tools_available() {
     local result=0
     required_tools=("kubectl" "helm" "jq")
+    info "Checking $required_tools are installed"
     for tool in "${required_tools[@]}"
     do
         if ! command -v $tool > /dev/null 2>&1; then
@@ -408,10 +409,10 @@ function check_required_tools_available() {
 #   - checks if cluster is healthy.
 #   - checks if kubectl, helm, jq are installed.
 function run_pre_checks() {
-    check_cluster_reachable && success "The cluster is reachable"
-    check_helm_releases && success "The cluster has Helm releases"
-    check_cluster_health && success "The cluster is healthy"
-    check_required_tools_available && success "All required tools are installed"
+    check_cluster_reachable && success "\tReachable"
+    check_cluster_health && success "\tHealthy"
+    check_helm_releases && success "\tExists"
+    check_required_tools_available && success "\tInstalled"
 }
 
 
