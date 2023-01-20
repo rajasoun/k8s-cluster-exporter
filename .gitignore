@@ -1,0 +1,4 @@
+.resources/*.txt
+.resources/helm
+.resources/yaml
+.reports/*.csv
