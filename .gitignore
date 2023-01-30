@@ -1,4 +1,5 @@
 .resources/*.txt
 .resources/helm
 .resources/yaml
+.resources/charts
 .report/*.csv
