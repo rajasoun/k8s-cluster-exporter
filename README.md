@@ -22,6 +22,6 @@ Kubernetes Cluster Exporter environment variables, helm manifests & values.
 1. Run Pre Checks to check if all pre-requisites are installed
 
     ```sh
-    $GIT_REPO_PATH/pre-check.sh
+    ./cluster-exporter.sh precheck
     ```
 
