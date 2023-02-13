@@ -18,6 +18,7 @@ function main(){
     opt="$1"
     choice=$( tr '[:upper:]' '[:lower:]' <<<"$opt" )
     case $choice in
+        configure)kube_config $@;;
         precheck)run_pre_checks;;
         env-list)print_tabular_output;;
         env)write_to_file;;

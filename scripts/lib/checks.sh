@@ -38,7 +38,7 @@ function check_cluster_health() {
 # Function : check_kubectl
 function check_required_tools_available() {
     local result=0
-    required_tools=("kubectl" "helm" "jq")
+    required_tools=("kubectl" "helm" "jq" "kubectx" "kubens")
     info "Checking $required_tools are installed"
     for tool in "${required_tools[@]}"
     do

@@ -1,0 +1,7 @@
+---
+# Environment Template
+environment: 
+  AWS_PROFILE: 
+  AWS_REGION: 
+  CLUSTER: 
+
