@@ -8,9 +8,12 @@ function check_cluster_reachable() {
     if ! kubectl get pods > /dev/null 2>&1; then
         error "The cluster is not reachable"
         result=1
+    else 
+        info "\tCluster : $(kubectl config view --minify -o jsonpath='{.clusters[].name}')"
     fi
     return $result
 }
+
 
 # Function : check_helm_releases
 function check_helm_releases() {
